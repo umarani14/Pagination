@@ -97,12 +97,21 @@ public class PagingController {
 	@GetMapping("/writetoFile")
 	public String writeToFile() {
 		String apiUrl="http://localhost:8080/page/sort";
+		String jsonString;
+        JSONObject jsonObject;
 		try {
 			String responseBody = restTemplate1.getForObject(apiUrl, String.class);
-			
 			Path path=Paths.get("output.json");
 			Files.write(path, responseBody.getBytes());
 			log.info("File written to: " + path.toAbsolutePath());
+			jsonString = new String(
+	                Files.readAllBytes(Paths.get(""+path.toAbsolutePath())));
+			jsonObject = new JSONObject(jsonString);
+			JSONArray docs
+            = jsonObject.getJSONArray("content");
+			File file = new File("C:\\Users\\Public\\Frontend\\PagingRepo\\PagingRepo\\outputCsv.csv");
+			String csvString = CDL.toString(docs);
+            FileUtils.writeStringToFile(file, csvString);
 			return "successfully written";
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -111,23 +120,23 @@ public class PagingController {
 		}
 	}
 	
-	@GetMapping("/WriteToCSV")
-	private void writeJSONToCsv() {
-		String apiUrl="http://localhost:8080/page/sort";
-		String jsonString;
-        JSONObject jsonObject;
-		try {
-			jsonString = new String(
-	                Files.readAllBytes(Paths.get("C:\\Users\\Public\\Frontend\\PagingRepo\\PagingRepo\\output.json")));
-			jsonObject = new JSONObject(jsonString);
-			JSONArray docs
-            = jsonObject.getJSONArray("content");
-			File file = new File("C:\\Users\\Public\\Frontend\\PagingRepo\\PagingRepo\\outputCsv.csv");
-			String csvString = CDL.toString(docs);
-            FileUtils.writeStringToFile(file, csvString);			
-		}catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
+//	@GetMapping("/WriteToCSV")
+//	private void writeJSONToCsv() {
+//		String apiUrl="http://localhost:8080/page/sort";
+//		String jsonString;
+//        JSONObject jsonObject;
+//		try {
+//			jsonString = new String(
+//	                Files.readAllBytes(Paths.get("C:\\Users\\Public\\Frontend\\PagingRepo\\PagingRepo\\output.json")));
+//			jsonObject = new JSONObject(jsonString);
+//			JSONArray docs
+//            = jsonObject.getJSONArray("content");
+//			File file = new File("C:\\Users\\Public\\Frontend\\PagingRepo\\PagingRepo\\outputCsv.csv");
+//			String csvString = CDL.toString(docs);
+//            FileUtils.writeStringToFile(file, csvString);			
+//		}catch(Exception e) {
+//			e.printStackTrace();
+//		}
+//	}
 	
 }
